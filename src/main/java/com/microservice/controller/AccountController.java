@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.microservice.reqmodel.UserCreateModel;
+import com.microservice.reqmodel.UserLoginModel;
 import com.microservice.service.AccountService;
 
 @RestController
@@ -49,6 +50,15 @@ public class AccountController {
 			return new ResponseEntity<>(accService.createUser(model), HttpStatus.OK);
 		} catch (IllegalArgumentException exc) {
 			return new ResponseEntity<>("Error creating user, invalid credentials", HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PostMapping(value="/api/users/login")
+	public ResponseEntity<?>loginUser(@RequestBody UserLoginModel model){
+		try {
+			return new ResponseEntity<>(accService.getUserByLogin(model),HttpStatus.OK);
+		}catch(IllegalArgumentException exc) {
+			return new ResponseEntity<>("Invalid credentials, try again", HttpStatus.BAD_REQUEST);
 		}
 	}
 
