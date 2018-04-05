@@ -6,7 +6,8 @@ public class UserCreateModel {
 	private String login;
 	private String password;
 	private String confirmPassword;
-
+	
+	public UserCreateModel() {}
 	public UserCreateModel(String email, String login, String password, String confirmPassword) {
 		this.email = email;
 		this.login = login;

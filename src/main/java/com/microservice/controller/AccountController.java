@@ -43,7 +43,7 @@ public class AccountController {
 		}
 	}
 
-	@PostMapping(value = "/api/user/")
+	@PostMapping(value = "/api/users/create")
 	public ResponseEntity<?> createUser(@RequestBody UserCreateModel model) {
 		try {
 			return new ResponseEntity<>(accService.createUser(model), HttpStatus.OK);

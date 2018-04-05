@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.microservice.model.UserAccount;
 import com.microservice.repository.AccountRepository;
 import com.microservice.reqmodel.UserCreateModel;
+import com.microservice.reqmodel.UserLoginModel;
+import com.microservice.utils.CryptUtils;
 
 @Service
 public class AccountService {
@@ -33,15 +35,27 @@ public class AccountService {
 	}
 
 	@Transactional
+	public UserAccount getUserByLogin(UserLoginModel model) {
+		UserAccount user = accRepo.findByLogin(model.getLogin());
+		if (user == null || !user.getPassword().equals(CryptUtils.generateHashSHA1(model.getPassword().trim()))) {
+			throw new IllegalArgumentException();
+		} else {
+			return user;
+		}
+	}
+
+	@Transactional
 	public UserAccount createUser(UserCreateModel model) {
 		if (model == null) {
 			throw new IllegalArgumentException();
 		}
 		if (model.getLogin().trim().isEmpty() || model.getEmail().trim().isEmpty()
-				|| model.getPassword().trim().isEmpty()) {
+				|| model.getPassword().trim().isEmpty()
+				|| !model.getPassword().trim().equals(model.getConfirmPassword().trim())) {
 			throw new IllegalArgumentException();
 		}
-		UserAccount user = new UserAccount(model.getLogin(), model.getEmail(), model.getPassword());
+		String encryptedPassword = CryptUtils.generateHashSHA1(model.getPassword().trim());
+		UserAccount user = new UserAccount(model.getLogin(), model.getEmail(), encryptedPassword);
 		return accRepo.saveAndFlush(user);
 	}
 }
